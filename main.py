@@ -5,7 +5,7 @@ import random
 #Global variables
 
 num_modules = 17                #The number of modules in the space station
-module = 1                      #The module of the space station we are in
+module = 1                      ##The module of the space station we are in
 last_module = 0                 #The last module we were in
 possible_moves = []             #List of the possible moves we can make
 alive = True                    #Whether the player is alive or dead
@@ -19,6 +19,26 @@ info_panels = []                #Location of the information panels
 workers = []                    #Location of the worker aliens
 
 #Procedure declarations
+
+def spawn_npcs():
+    global num_modules, queen, vent_shafts, greedy_info_panels, workers
+    module_set = []
+    for counter in range(2,num_modules):
+        module_set.append(counter)
+    random.shuffle(module_set)
+    i = 0
+    queen = module_set[i]
+    for counter in range(0,3):
+        i=i+1
+        vent_shafts.append(module_set[i])
+
+    for counter in range(0,2):
+        i=i+1
+        info_panels.append(module_set[i])
+        
+    for counter in range(0,3):
+        i=i+1
+        workers.append(module_set[i])
 
 def load_module():
     global module, possible_moves
@@ -68,6 +88,12 @@ def get_action():
                 print("The module must be connected to the current module.")
     
 #Main program starts here
+
+spawn_npcs()
+print("Queen alien is located in module:",queen)
+print("Ventilation shafts are located in modules:",vent_shafts)
+print("Information panels are located in modules:",info_panels)
+print("Worker aliens are located in modules:",workers)
                 
 while alive and not won:
     load_module()
