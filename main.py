@@ -65,7 +65,7 @@ def load_module():
 
 def get_modules_from(module):
     moves = []
-    text_file = open("Charles_Darwin\module" + str(module) + ".txt", "r")
+    text_file = open("Charles_Darwin/module" + str(module) + ".txt", "r")
     for counter in range(0,4):
         move_read = text_file.readline()
         move_read = int(move_read.strip())
