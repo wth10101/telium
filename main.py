@@ -1,4 +1,4 @@
-#Telium - the game (stage 5)
+#Telium - the game (stage 6)
 
 import random
 
@@ -20,6 +20,56 @@ workers = []                    #Location of the worker aliens
 
 #Procedure declarations
 
+def move_queen():
+    global num_modules, module, last_module, locked, queen, won, vent_shafts
+    #If we are in the same module as the queen...
+    if module == queen:
+        print("There it is!  The queen alien is in this module...")
+        #Decide how many moves the queen should take
+        moves_to_make = random.randint(1,3)
+        can_move_to_last_module = False
+        while moves_to_make > 0:
+            #Get the escapes the queen can make
+            escapes = get_modules_from(queen)
+            #Remove the current module as an escape
+            if module in escapes:
+                escapes.remove(module)
+            #Allow queen to double back behind us from another module
+            if last_module in escapes and can_move_to_last_module == False:
+                escapes.remove(last_module)
+            #Remove a module that is locked as an escape
+            if locked in escapes:
+                escapes.remove(locked)
+
+            print("**********")
+            print(escapes)
+            #If there is no escape then player has won...
+            if len(escapes) == 0:
+                won = True
+                moves_to_make = 0
+                print("...and the door is locked.  It's trapped.")
+            #Otherwise move the queen to an adjacent module
+            else:
+                if moves_to_make == 1:
+                    print("...and has escaped.")
+                queen = random.choice(escapes)
+                moves_to_make = moves_to_make - 1
+                can_move_to_last_module = True
+                #Handle the queen being in a module with a ventilation shaft
+                while queen in vent_shafts:
+                    if moves_to_make > 1:
+                        print("...and has escaped.")
+                    print("We can hear scuttling in the ventilation shafts.")
+                    valid_move = False
+                    #Queen cannot land in a module with another ventilation shaft
+                    while valid_move == False:
+                        valid_move = True
+                        queen = random.randint(1,num_modules)
+                        if queen in vent_shafts:
+                            valid_move = False
+                    #Queen always stops moving after travelling through shaft
+                    moves_to_make = 0
+
 def lock():
     global num_modules, power, locked
     new_lock = int(input("Enter module to lock:"))
@@ -38,7 +88,7 @@ def check_vent_shafts():
         print("There is a bank of fuel cells here.")
         print("You load one into your flamethrower.")
         fuel_gained = 50
-        print("Fuel was",fuel,"now reading:",fuel+fuel_gained)
+        print("Fuel was",fuel,"now reading: ",fuel+fuel_gained)
         fuel = fuel + fuel_gained
         print("The doors suddenly lock shut.")
         print("What is happening to the station?")
@@ -134,6 +184,7 @@ print("Worker aliens are located in:",workers)
 while alive and not won:
     load_module()
     check_vent_shafts()
+    move_queen()
     if won == False and alive == True:
         output_moves()
         get_action()
