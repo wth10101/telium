@@ -1,4 +1,4 @@
-#Telium - the game
+#Telium - the game (stage 4)
 
 import random
 
