@@ -1,4 +1,4 @@
-#Telium - the game (stage 4)
+#Telium - the game (stage 5)
 
 import random
 
@@ -19,6 +19,18 @@ info_panels = []                #Location of the information panels
 workers = []                    #Location of the worker aliens
 
 #Procedure declarations
+
+def lock():
+    global num_modules, power, locked
+    new_lock = int(input("Enter module to lock:"))
+    if new_lock<0 or new_lock>num_modules:
+        print("Invalid module.  Operation failed.")
+    elif new_lock == queen:
+        print("Operation failed.  Unable to lock module.")
+    else:
+        locked = new_lock
+        print("Aliens cannot get into module",locked)
+    power_used = 25 + 5*random.randint(0,5)
 
 def check_vent_shafts():
     global num_modules, module, vent_shafts, fuel
@@ -104,7 +116,13 @@ def get_action():
                 module = move
             else:
                 print("The module must be connected to the current module.")
-    
+
+        if action == "SCANNER":
+            command = input("Scanner ready.  Enter command (LOCK):")
+            if command == "LOCK":
+                lock()
+
+
 #Main program starts here
 
 spawn_npcs()
