@@ -20,6 +20,24 @@ workers = []                    #Location of the worker aliens
 
 #Procedure declarations
 
+def check_vent_shafts():
+    global num_modules, module, vent_shafts, fuel
+    if module in vent_shafts:
+        print("There is a bank of fuel cells here.")
+        print("You load one into your flamethrower.")
+        fuel_gained = 50
+        print("Fuel was",fuel,"now reading:",fuel+fuel_gained)
+        fuel = fuel + fuel_gained
+        print("The doors suddenly lock shut.")
+        print("What is happening to the station?")
+        print("Our only escape is to climb into the ventilation shaft.")
+        print("We have no idea where we are going.")
+        print("We follow the passages and find ourselves sliding down.")
+        last_module = module
+        module = random.randint(1,num_modules)
+        load_module()
+
+
 def spawn_npcs():
     global num_modules, queen, vent_shafts, greedy_info_panels, workers
     module_set = []
@@ -47,7 +65,7 @@ def load_module():
 
 def get_modules_from(module):
     moves = []
-    text_file = open("Charles_Darwin/module" + str(module) + ".txt", "r")
+    text_file = open("Charles_Darwin\module" + str(module) + ".txt", "r")
     for counter in range(0,4):
         move_read = text_file.readline()
         move_read = int(move_read.strip())
@@ -91,12 +109,13 @@ def get_action():
 
 spawn_npcs()
 print("Queen alien is located in module:",queen)
-print("Ventilation shafts are located in modules:",vent_shafts)
-print("Information panels are located in modules:",info_panels)
-print("Worker aliens are located in modules:",workers)
+print("Ventilation shafts are located in module:",vent_shafts)
+print("Information panels are located in module:",info_panels)
+print("Worker aliens are located in:",workers)
                 
 while alive and not won:
     load_module()
+    check_vent_shafts()
     if won == False and alive == True:
         output_moves()
         get_action()
