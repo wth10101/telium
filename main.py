@@ -1,4 +1,4 @@
-#Telium - the game (stage 6)
+#Telium - the game - STAGE 7 PLAYER HELP
 
 import random
 
@@ -20,6 +20,17 @@ workers = []                    #Location of the worker aliens
 
 #Procedure declarations
 
+def intuition():
+    global possible_moves, workers, vent_shafts
+    #Check what is in each of the possible moves
+    print("*****")
+    print(possible_moves)
+    for connected_module in possible_moves:
+        if connected_module in workers:
+            print("I can hear something scuttling!")
+        if connected_module in vent_shafts:
+            print("I can feel cold air!")
+
 def move_queen():
     global num_modules, module, last_module, locked, queen, won, vent_shafts
     #If we are in the same module as the queen...
@@ -40,9 +51,6 @@ def move_queen():
             #Remove a module that is locked as an escape
             if locked in escapes:
                 escapes.remove(locked)
-
-            print("**********")
-            print(escapes)
             #If there is no escape then player has won...
             if len(escapes) == 0:
                 won = True
@@ -186,6 +194,7 @@ while alive and not won:
     check_vent_shafts()
     move_queen()
     if won == False and alive == True:
+        intuition()
         output_moves()
         get_action()
 
