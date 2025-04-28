@@ -1,4 +1,4 @@
-#Telium - the game - STAGE 7 PLAYER HELP
+#Telium - the game
 
 import random
 
@@ -10,7 +10,7 @@ last_module = 0                 #The last module we were in
 possible_moves = []             #List of the possible moves we can make
 alive = True                    #Whether the player is alive or dead
 won = False                     #Whether the player has won
-power = 100                     #The amount of power the space station has
+power = 100                   #The amount of power the space station has
 fuel = 500                      #The amount of fuel the player has in the flamethrower
 locked = 0                      #The module that has been locked by the player
 queen = 0                       #Location of the queen alien
@@ -20,11 +20,52 @@ workers = []                    #Location of the worker aliens
 
 #Procedure declarations
 
+def worker_aliens():
+    global module, workers, fuel, alive
+    #Output alien encountered
+    if module in workers:
+        print("Startled, a young alien scuttles across the floor.")
+        print("It turns and leaps towards us.")
+        #Get the player's action
+        successful_attack = False
+        while successful_attack == False:
+            print("You can:")
+            print()
+            print("- Short blast your flamethrower to frighten it away.")
+            print("- Long blast your flamethrower to try to kill it.")
+            print()
+            print("How will you react? (S, L)")
+            action = 0
+            while action not in ("S", "L"):
+                action = input("Press the trigger: ")
+            fuel_used = int(input("How much fuel will you use? ..."))
+            fuel = fuel - fuel_used
+            #Check if player has run out of fuel
+            if fuel<=0:
+                alive = False
+                return
+            #Work out how much fuel is needed
+            if action == "S":
+                fuel_needed = 30 + 10*random.randint(0,5)
+            if action == "L":
+                fuel_needed = 90 + 10*random.randint(0,5)
+            #Try again if not enough fuel was used
+            if fuel_used >= fuel_needed:
+                successful_attack = True
+            else:
+                print("The alien squeals but is not dead. It’s angry.")
+        #Successful action
+        if action == "S":
+            print("The alien scuttles away into the corner of the room.")
+        if action == "L":
+            print("The alien has been destroyed.")
+            #Remove the worker from the module
+            workers.remove(module)
+        print()
+
 def intuition():
     global possible_moves, workers, vent_shafts
     #Check what is in each of the possible moves
-    print("*****")
-    print(possible_moves)
     for connected_module in possible_moves:
         if connected_module in workers:
             print("I can hear something scuttling!")
@@ -83,7 +124,7 @@ def lock():
     new_lock = int(input("Enter module to lock:"))
     if new_lock<0 or new_lock>num_modules:
         print("Invalid module.  Operation failed.")
-    elif new_lock == queen:
+    elif new_lock == queen or new_lock in workers:
         print("Operation failed.  Unable to lock module.")
     else:
         locked = new_lock
@@ -113,7 +154,9 @@ def spawn_npcs():
     module_set = []
     for counter in range(2,num_modules):
         module_set.append(counter)
+    #print(module_set)
     random.shuffle(module_set)
+    #print(module_set)
     i = 0
     queen = module_set[i]
     for counter in range(0,3):
@@ -161,7 +204,7 @@ def output_moves():
     print()
     
 def get_action():
-    global module, last_module, possible_moves
+    global module, last_module, possible_moves, power, alive
     valid_action = False
     while valid_action == False:
         print("What do you want to do next ? (MOVE, SCANNER)")
@@ -171,7 +214,7 @@ def get_action():
             if move in possible_moves:
                 valid_action = True
                 last_module = module
-                module = move
+                power = power -1
             else:
                 print("The module must be connected to the current module.")
 
@@ -193,6 +236,7 @@ while alive and not won:
     load_module()
     check_vent_shafts()
     move_queen()
+    worker_aliens()
     if won == False and alive == True:
         intuition()
         output_moves()
